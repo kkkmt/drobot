@@ -1,0 +1,61 @@
+Поиск id_type и id_topi, более подробно для чего это описано в Заметки.txt
+
+CREATE OR REPLACE FUNCTION SEARCH_ID
+(
+    WORD    IN VARCHAR2,
+    TTABLE  IN NUMBER DEFAULT 1 -- Если 1, то принадлжеит таблице TYPEOCCUP
+                                -- иначе таблице TASKSWORKS 
+)
+RETURN NUMBER
+IS 
+
+    id number;
+
+BEGIN
+
+    IF ( TTABLE = 1 ) THEN
+        SELECT  id_type INTO id
+        FROM    typeoccup
+        WHERE   trim(lower(word)) = lower(tname);
+    ELSE 
+        SELECT  id_task INTO id
+        FROM    tasksworks
+        WHERE   trim(lower(word)) = lower(twname);
+    END IF;    
+    
+    commit;
+
+--insert into sqltest(text) values(to_char(id)); commit;
+    
+    RETURN ID;
+
+END SEARCH_ID;
+/
+
+------------------------------------------------
+
+Поиск последней записи в таблице maintable, подробно описано в файле Заметки.txt
+
+CREATE OR REPLACE FUNCTION SEARCH_MAINID
+RETURN NUMBER
+IS
+    id NUMBER;
+BEGIN
+
+    SELECT  id_main INTO id
+    FROM    maintable
+    WHERE   datecreate = 
+                         (
+                            SELECT  MAX(datecreate)
+                            FROM    maintable
+                          );
+    
+    commit;
+    
+  --insert into sqltest(text) values(to_char(id)); commit;
+
+    
+    RETURN ID;
+    
+END SEARCH_MAINID;
+/

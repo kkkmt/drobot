@@ -1,0 +1,135 @@
+CREATE OR REPLACE PROCEDURE SYSTEM.INST_TOPICLAB
+(
+    ID_SEC      IN NUMBER,              -- id наименование разделов
+    ID_MAIN     IN NUMBER,              -- id главной таблицы
+    TOPIC       IN NUMBER DEFAULT 1,    -- если 1 = тема, иначе = лабораторная работа
+    TNAME       IN VARCHAR2,            -- наименования темы или лаб. раб.
+    CONHOURSE   IN NUMBER,              -- аудиторные часы
+    NCONHOURSE  IN NUMBER,              -- внеаудиторные часы
+    TMONTH      IN VARCHAR2,            -- месяц
+    ID_TYPE     IN NUMBER,              -- id вида занятия
+    VISAIDS     IN NUMBER DEFAULT 0,    -- если 0 = наглядного пособия нет, иначе есть
+    ID_TASK     IN NUMBER               -- id задания для сам. раб.
+)
+IS
+
+  intot   VARCHAR2(4000 Byte);
+  val     VARCHAR2(4000 Byte); 
+  resin   VARCHAR2(4000 Byte); 
+  resval  VARCHAR2(4000 Byte);
+  res     VARCHAR2(4000 Byte);  
+
+BEGIN
+
+    resin := 'INSERT INTO topiclab(';
+    resval := 'VALUES( ';
+    
+    
+    IF ( ID_SEC IS NOT NULL ) THEN
+        intot := ' id_sec ';
+        val := to_char(ID_SEC); 
+    END IF;    
+    
+    IF ( ID_MAIN IS NOT NULL ) THEN
+        IF((INTOT IS NOT NULL) AND (VAL IS NOT NULL)) THEN
+            intot := intot || ', id_main';
+            val := val || ' , '|| to_char(ID_MAIN);
+        ELSE
+            intot := 'id_main';
+            val := to_char(ID_MAIN);    
+        END IF;
+    END IF;
+    
+    IF((INTOT IS NOT NULL) AND (VAL IS NOT NULL)) THEN
+        intot := intot || ', topic';
+        val := val|| ' , ' || to_char(TOPIC) ;
+    ELSE
+        intot := ' topic';
+        val := to_char(TOPIC);    
+    END IF;
+    
+    IF ( TNAME IS NOT NULL ) THEN
+        IF((INTOT IS NOT NULL) AND (VAL IS NOT NULL)) THEN
+            intot := intot || ',tname';
+            val := val || ' , '''|| trim(TNAME) ||'''';
+        ELSE
+            intot := ' tname';
+            val := '''' ||trim(TNAME) || ''''; 
+        END IF;       
+    END IF;
+    
+    IF ( CONHOURSE IS NOT NULL ) THEN
+        IF((INTOT IS NOT NULL) AND (VAL IS NOT NULL)) THEN
+            intot := intot || ', conhourse ';
+            val := val || ' , '|| to_char(CONHOURSE);
+        ELSE
+            intot := ' conhourse';
+            val := to_char(CONHOURSE);
+        END IF;        
+    END IF;
+    
+    IF ( NCONHOURSE IS NOT NULL ) THEN
+        IF((INTOT IS NOT NULL) AND (VAL IS NOT NULL)) THEN
+            intot := intot || ', nconhourse ';
+            val := val || ' , '|| to_char(NCONHOURSE);
+        ELSE
+            intot := ' nconhourse';
+            val := to_char(NCONHOURSE);
+        END IF;        
+    END IF;
+    
+    IF ( TMONTH IS NOT NULL ) THEN
+        IF((INTOT IS NOT NULL) AND (VAL IS NOT NULL)) THEN
+            intot := intot || ', tmonth';
+            val := val || ' , '''|| trim(TMONTH) || '''' ;
+        ELSE
+            intot := ' tmonth';
+            val := ''''||trim(TMONTH) || '''';    
+        END IF;
+    END IF;
+    
+    IF (ID_TYPE IS NOT NULL ) THEN
+        IF((INTOT IS NOT NULL) AND (VAL IS NOT NULL)) THEN
+            intot := intot || ', id_type';
+            val := val || ' , ' || to_char(ID_TYPE);
+        ELSE
+            intot := ' id_type';
+            val := to_char(ID_TYPE);     
+        END IF;
+    END IF;
+    
+    IF((INTOT IS NOT NULL) AND (VAL IS NOT NULL)) THEN
+        intot := intot || ', visaids';
+        val := val || ' , ' || to_char( VISAIDS );
+    ELSE
+        intot := ' visaids';
+        val := to_char( VISAIDS );       
+    END IF;
+  
+    IF ( ID_TASK IS NOT NULL ) THEN
+        IF((INTOT IS NOT NULL) AND (VAL IS NOT NULL)) THEN
+            intot := intot || ', id_task';
+            val := val || ' , ' || to_char(ID_TASK);
+        ELSE
+            intot := ' id_task';
+            val := to_char(ID_TASK);    
+        END IF;                
+    END IF;
+
+    IF((INTOT IS NOT NULL) AND (VAL IS NOT NULL)) THEN
+        intot := intot || ') ';
+        val := val || ' ) ';
+    ELSE
+        res := 'ERORR';    
+    END IF;    
+    
+    resin := resin || intot;
+    resval := resval || val;
+    res := resin || resval;
+    
+    EXECUTE IMMEDIATE res;
+    
+    --insert into sqltest(text) values(res);
+    
+END INST_TOPICLAB;
+/

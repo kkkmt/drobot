@@ -133,3 +133,163 @@ BEGIN
     
 END INST_TOPICLAB;
 /
+
+
+
+
+CREATE OR REPLACE PROCEDURE INSTSECT
+(
+    VARIABLE    IN NUMBER,  --Переменная которая передается из клиентской части
+    SNUM        IN NUMBER DEFAULT 0,  -- Номер раздела
+    SNAME       IN VARCHAR2 -- Название раздела
+    
+)
+IS
+BEGIN
+
+    INSERT INTO sections (  
+                            id_main, 
+                            snum,
+                            sname )
+                VALUES (
+                        VARIABLE,
+                        SNUM,
+                        SNAME);
+     commit;                                
+
+END INSTSECT;
+/
+
+
+
+CREATE OR REPLACE PROCEDURE SYSTEM.INSTMAIN
+(
+    SURTEACH    IN VARCHAR2,
+    NAMETEACH   IN VARCHAR2,
+    MIDDLTEACH  IN VARCHAR2,
+    MNUM        IN NUMBER,
+    MNAME       IN VARCHAR2,
+    NAMESUB     IN VARCHAR2,
+    COURSE      IN NUMBER,
+    MGROUPE     IN VARCHAR2,
+    PROGPLAN    IN VARCHAR2,
+    CONTFORM    IN VARCHAR2
+)
+IS
+
+    intot   VARCHAR2(4000 Byte);
+    val     VARCHAR2(4000 Byte); 
+    resin   VARCHAR2(4000 Byte); 
+    resval  VARCHAR2(4000 Byte);
+    res     VARCHAR2(4000 Byte);
+
+BEGIN
+
+    resin := 'INSERT INTO MAINTABLE ( ';
+    resval := 'VALUES (';
+    
+    IF (SURTEACH IS NOT NULL)THEN
+        intot := ' surteach ';
+        val :='''' || trim(SURTEACH) ||'''';
+    END IF; 
+    
+    IF ( NAMETEACH IS NOT NULL ) THEN
+        IF((INTOT IS NOT NULL) AND (VAL IS NOT NULL)) THEN
+            intot := intot || ', nameteach';
+            val := val || ' , '''|| trim(NAMETEACH) ||'''';
+        ELSE
+            intot := 'nameteach';
+            val := ''''|| trim(NAMETEACH) ||'''';    
+        END IF;
+    END IF;
+    
+    IF ( MIDDLTEACH IS NOT NULL ) THEN
+        IF((INTOT IS NOT NULL) AND (VAL IS NOT NULL)) THEN
+            intot := intot || ', middlteach';
+            val := val || ' , '''|| trim(MIDDLTEACH) ||'''' ;
+        ELSE
+            intot := 'middlteach';
+            val := ''''|| trim(MIDDLTEACH) ||'''';    
+        END IF;
+    END IF;
+    
+    IF ( MNUM IS NOT NULL ) THEN
+        IF (( INTOT IS NOT NULL) AND ( VAL IS NOT NULL )) THEN
+            intot := intot || ', mnum';
+            val := val || ' , ' || to_char(MNUM);
+        ELSE
+            intot := 'mnum';
+            val := to_char(MNUM);
+        END IF;        
+    END IF;
+    
+    IF ( MNAME IS NOT NULL ) THEN
+        IF (( INTOT IS NOT NULL) AND ( VAL IS NOT NULL )) THEN
+            intot := intot || ', mname';
+            val := val || ' , ''' || trim(MNAME) ||'''';
+        ELSE
+            intot := ' mname';
+            val :=''''|| trim(MNAME) ||'''';    
+        END IF;
+    END IF;
+    
+    IF ( NAMESUB IS NOT NULL ) THEN
+        IF (( INTOT IS NOT NULL) AND ( VAL IS NOT NULL )) THEN
+            intot := intot || ', namesub';
+            val := val || ' , ''' || trim(NAMESUB) ||'''';
+        ELSE
+            intot := ' namesub';
+            val := ''''||trim(NAMESUB) ||'''';    
+        END IF;
+    END IF;
+    
+    IF ( COURSE IS NOT NULL ) THEN
+        IF (( INTOT IS NOT NULL) AND ( VAL IS NOT NULL )) THEN
+            intot := intot || ', course';
+            val := val || ' , ' || to_char(COURSE);
+        ELSE
+            intot := ' course';
+            val := to_char(COURSE);    
+        END IF;
+    END IF;
+    
+    IF ( MGROUPE IS NOT NULL ) THEN
+        IF (( INTOT IS NOT NULL) AND ( VAL IS NOT NULL )) THEN
+            intot := intot || ', mgroupe';
+            val := val || ' , ''' || trim(MGROUPE) ||'''';
+        ELSE
+            intot := ' mgroupe ';
+            val := ''''||trim(MGROUPE)||'''';    
+        END IF;        
+    END IF;
+    
+    IF ( PROGPLAN IS NOT NULL ) THEN
+        IF (( INTOT IS NOT NULL) AND ( VAL IS NOT NULL )) THEN
+            intot := intot || ', progplan';
+            val := val || ' , ''' || trim(PROGPLAN)||'''';
+        ELSE
+            intot := ' progplan ';
+            val := ''''||trim(PROGPLAN)||'''';    
+        END IF;
+    END IF;
+    
+    IF ( CONTFORM IS NOT NULL ) THEN
+        IF (( INTOT IS NOT NULL) AND ( VAL IS NOT NULL )) THEN
+            intot := intot || ', contform';
+            val := val || ' , ''' || trim(CONTFORM) ||'''';
+        ELSE
+            intot := ' contform ';
+            val := ''''||trim(CONTFORM)||'''';    
+        END IF;
+    END IF;
+
+    resin := resin || intot || ') ';
+    resval := resval || val || ') ';
+    res := resin || resval;
+    
+    EXECUTE IMMEDIATE res;
+    
+    --insert into sqltest(text) values(res);
+    
+END INSTMAIN;
+/
